@@ -2,7 +2,9 @@
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-
+import Slide1 from '../images/musiccow.jpg'
+import Slide2 from '../images/milking2.jpg';
+import Slide3 from '../images/millkcow3.jpg'
 const SimpleCarousel = () => {
     const settings = {
       dots: true,
@@ -17,13 +19,13 @@ const SimpleCarousel = () => {
     return (
       <Slider {...settings}>
         <div>
-          <img src="image1.jpg" alt="Slide 1" />
+          <img src={Slide1} alt="Slide 1" />
         </div>
         <div>
-          <img src="image2.jpg" alt="Slide 2" />
+          <img src={Slide2} alt="Slide 2" />
         </div>
         <div>
-          <img src="image3.jpg" alt="Slide 3" />
+          <img src={Slide3} alt="Slide 3" />
         </div>
         {/* Add more slides as needed */}
       </Slider>

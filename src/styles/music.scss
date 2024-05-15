@@ -1,0 +1,11 @@
+.musicTrack {
+      display: flex; 
+    align-items: center; 
+    padding: 1rem 2rem 1rem 2rem; 
+    img { 
+        width: 30%; 
+    } 
+    &:hover { 
+        background: rgb(120, 248, 160); 
+    } 
+    }

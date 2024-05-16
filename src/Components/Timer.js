@@ -1,7 +1,7 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
-import {formatTime} from '../CommonFunctions'
-const Timer = ({milking,setDuration}) => {
+import { formatTime } from '../CommonFunctions'
+const Timer = ({ milking, setDuration }) => {
   const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
@@ -11,19 +11,17 @@ const Timer = ({milking,setDuration}) => {
         setSeconds(prevSeconds => prevSeconds + 1);
       }, 1000);
     } else {
+      setSeconds(0)
       clearInterval(interval);
     }
     return () => clearInterval(interval);
   }, [milking]);
-   useEffect(()=>{
-    if(!milking){
-        setSeconds(0) 
-        setDuration(seconds) 
-        console.log('second',seconds)
-    }else if(milking){
-        setDuration(0)
-    }
-   },[milking])
+  // useEffect(() => {
+  //   if (!milking) {
+  //     setDuration(seconds)
+  //     setSeconds(0)
+  //   }
+  // }, [milking])
   const getFormatedTime = formatTime(seconds)
 
   return (

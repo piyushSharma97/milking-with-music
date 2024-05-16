@@ -1,17 +1,19 @@
-import  { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ListGroup } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import { tracks } from '../data/tracks';
 import Timer from './Timer';
-import {formatTime} from '../CommonFunctions'
+import { formatTime } from '../CommonFunctions';
+import MilkModal from './MilkModal';
 const MilkingMusicPlayer = () => {
     const [milking, setMilking] = useState(false);
     const [startTime, setStartTime] = useState(null);
+    const [paused, setPaused] = useState(false);
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-    const [currentTrack, setCurrentTrack] = useState(null);
     const [audio] = useState(new Audio());
     const [endTime, setEndTime] = useState(null);
-    const [duration,setDuration] = useState(null)
+    const [showMilkModal, setShowMilkModal] = useState(false);
+    const [duration, setDuration] = useState(null)
+    const [milkQuantity, setMilkQuantity] = useState('');
     useEffect(() => {
         const playAudio = () => {
             if (tracks[currentTrackIndex] && tracks[currentTrackIndex].src) {
@@ -19,20 +21,26 @@ const MilkingMusicPlayer = () => {
                 audio.loop = true;
                 audio.play();
                 setStartTime(new Date());
+                console.log('audio',audio)
             }
+            setShowMilkModal(false)
         };
-
         const stopAudio = () => {
             audio.loop = false;
             audio.pause();
             audio.currentTime = 0;
             setEndTime(new Date());
-            setDuration(endTime - startTime);
+            console.log('endTime?.getTime() ',endTime?.getTime() )
+            setShowMilkModal(true)
         };
-
-        if (milking) {
+        const pauseAudio=()=>{
+            audio.pause();
+        }
+        if (milking && !paused) {
             playAudio();
-        } else {
+        } if(milking && paused){
+             pauseAudio()
+        }else if(!milking) {
             stopAudio();
         }
 
@@ -40,29 +48,55 @@ const MilkingMusicPlayer = () => {
             stopAudio();
         };
     }, [milking]);
-    const startMilking = () => {
+    const pauseMilking = () => {
+        setPaused(true);
+    };
+
+    const resumeMilking = () => {
+        setPaused(false);
+    };
+    useEffect(()=>{
+     if(startTime&&endTime){
+        setDuration((endTime?.getTime() - startTime?.getTime())/1000);
+     }
+    },[startTime,endTime])
+    const startMilking = (e) => {
+        e.preventDefault();
         setMilking(true);
+        setDuration(0)
         // Start music playback and timer
     };
-    const stopMilking = () => {
+    const stopMilking = (e) => {
+        e.preventDefault();
         setMilking(false);
-        // setEndTime(new Date());
-        // audio.pause();
-        // const milkingData = {
-        //     date: new Date().toLocaleDateString(),
-        //     startTime: startTime.toLocaleTimeString(),
-        //     endTime: endTime.toLocaleTimeString(),
-        //     totalMilk: 'TODO: Calculate milk yield',
-        // };
-        // saveMilkingSession(milkingData);
+      
         // Stop music and timer
         // Prompt user to enter milking details
-        // This function will be implemented later
+    };
+    const handleMilkConfirmation = () => {
+        // Save milking session details
+        const endTime = new Date();
+        const duration = endTime - startTime; // Calculate milking duration
+        const sessionData = {
+            date: startTime.toLocaleDateString(),
+            startTime: startTime.toLocaleTimeString(),
+            endTime: endTime.toLocaleTimeString(),
+            duration: formatTime(duration / 1000), // Convert milliseconds to seconds for the timer
+            milkQuantity: milkQuantity,
+        };
+        saveMilkingSession(sessionData);
+        
+        // Reset states
+        setMilking(false);
+        setPaused(false);
+        setStartTime(null);
+        setMilkQuantity('');
+        setShowMilkModal(false);
     };
     const saveMilkingSession = (sessionData) => {
-        // let milkingHistory = JSON.parse(localStorage.getItem('milkingHistory')) || [];
-        // milkingHistory.push(sessionData);
-        // localStorage.setItem('milkingHistory', JSON.stringify(milkingHistory));
+        let milkingHistory = localStorage.getItem('milkingHistory') ? JSON.parse(localStorage.getItem('milkingHistory')) : [];
+        milkingHistory.push(sessionData);
+        localStorage.setItem('milkingHistory', JSON.stringify(milkingHistory));
     };
     const setTrack = (index) => {
         setCurrentTrackIndex(index);
@@ -71,7 +105,9 @@ const MilkingMusicPlayer = () => {
             audio.play();
         }
     };
-    console.log('milking sdsd',milking)
+    const handleCloseMilkModal = () => {
+        setShowMilkModal(false);
+    };
     return (
         <div className="main-container text-center">
 
@@ -79,7 +115,11 @@ const MilkingMusicPlayer = () => {
                 <h2 className="heading mb-4">Milking Music Player</h2>
                 {milking ? (
                     <div className="milking-container">
+                       {paused?(
+                        <button className="milking-button stop-milking" onClick={resumeMilking}>Resume</button>
+                       ):<button className="milking-button stop-milking" onClick={pauseMilking}>Pause</button>} 
                         <button className="milking-button stop-milking" onClick={stopMilking}>Stop</button>
+                        
                     </div>
                 ) : (
                     <button className="milking-button start-milking" onClick={startMilking}>Start Milking</button>
@@ -87,18 +127,19 @@ const MilkingMusicPlayer = () => {
 
             </div>
             <div>
-                 <audio controls autoPlay>
-          <source src={currentTrack} type="audio/mpeg" />
-   s
-        </audio>
+                <Timer milking={milking} setDuration={setDuration} />
             </div>
-            <div>
-                <Timer milking={milking} setDuration={setDuration}/>
-            </div>
+            <MilkModal 
+            showMilkModal={showMilkModal}  
+            handleCloseMilkModal={handleCloseMilkModal} 
+            milkQuantity={milkQuantity}
+            setMilkQuantity={setMilkQuantity}
+            handleMilkConfirmation={handleMilkConfirmation}
+            />
             <div>
                 <h2 className="heading mb-4">Playlist</h2>
                 <ListGroup>
-                {tracks.map((track, index) => (
+                    {tracks.map((track, index) => (
                         <ListGroup.Item key={index} onClick={() => setTrack(index)}>
                             <a className={`musicTrack ${index === currentTrackIndex ? 'active' : ''}`}>
                                 {track.title}
@@ -106,7 +147,6 @@ const MilkingMusicPlayer = () => {
                         </ListGroup.Item>
                     ))}
                 </ListGroup>
-
             </div>
         </div>
     );

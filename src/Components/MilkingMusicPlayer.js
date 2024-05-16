@@ -38,6 +38,21 @@ const MilkingMusicPlayer = () => {
     }
     return (
         <div className="main-container text-center">
+
+            <div>
+                <h2 className="heading mb-4">Milking Music Player</h2>
+                {milking ? (
+                    <div className="milking-container">
+                        <button className="milking-button stop-milking" onClick={stopMilking}>Stop</button>
+                    </div>
+                ) : (
+                    <button className="milking-button start-milking" onClick={startMilking}>Start Milking</button>
+                )}
+
+            </div>
+            <div>
+                <Timer milking={milking}/>
+            </div>
             <div>
                 <h2 className="heading mb-4">Playlist</h2>
                 <ListGroup>
@@ -51,20 +66,6 @@ const MilkingMusicPlayer = () => {
                 </ListGroup>
 
             </div>
-            <div>
-                <h2 className="heading mb-4">Milking Music Player</h2>
-                {milking ? (
-                    <div className="milking-container">
-                        <Timer />
-                        <button className="btn btn-danger"  onClick={stopMilking}>Stop</button>
-                    </div>
-                ) : (
-                    <button className="btn btn-success" onClick={startMilking}>Start Milking</button>
-                )}
-                <Link className="btn btn-info mt-3" to="/milking-history">Milking History</Link>
-            </div>
-
-
         </div>
     );
 

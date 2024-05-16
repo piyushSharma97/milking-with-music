@@ -25,7 +25,7 @@ const MilkingHistoryPage = () => {
                                     <th scope="col">Date</th>
                                     <th scope="col">Start Time</th>
                                     <th scope="col">End Time</th>
-                                    <th scope="col">Total Milk</th>
+                                    <th scope="col">Total Milk Quantity</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -34,7 +34,7 @@ const MilkingHistoryPage = () => {
                                         <td>{session.date}</td>
                                         <td>{session.startTime}</td>
                                         <td>{session.endTime}</td>
-                                        <td>{session.totalMilk}</td>
+                                        <td>{session.milkQuantity}</td>
                                     </tr>
                                 ))}
 

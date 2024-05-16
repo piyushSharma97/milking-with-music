@@ -1,11 +1,21 @@
 .musicTrack {
-      display: flex; 
-    align-items: center; 
-    padding: 1rem 2rem 1rem 2rem; 
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    text-decoration: none; /* Remove underline from links */
+    color: #333; /* Default text color */
+    transition: background-color 0.3s ease;
     img { 
-        width: 30%; 
+        width: 3%; 
     } 
-    &:hover { 
-        background: rgb(120, 248, 160); 
-    } 
+    &:hover {
+        background-color: rgb(120, 248, 160); /* Change background color on hover */
+      }
+      .trackTitle {
+        flex: 1; /* Expand to fill remaining space */
+        margin-left: 1rem; /* Add space between image and text */
+        font-size: 1.2rem; /* Adjust font size */
+        font-weight: bold; /* Make text bold */
+      }
     }

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { ListGroup } from 'react-bootstrap';
 import { tracks } from '../data/tracks';
 import Timer from './Timer';
-import { formatTime } from '../CommonFunctions';
 import MilkModal from './MilkModal';
 const MilkingMusicPlayer = () => {
     const [milking, setMilking] = useState(false);
@@ -10,66 +9,60 @@ const MilkingMusicPlayer = () => {
     const [paused, setPaused] = useState(false);
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [audio] = useState(new Audio());
-    const [endTime, setEndTime] = useState(null);
     const [showMilkModal, setShowMilkModal] = useState(false);
-    const [duration, setDuration] = useState(null)
     const [milkQuantity, setMilkQuantity] = useState('');
+    const [playbackPosition, setPlaybackPosition] = useState(0);
     useEffect(() => {
         const playAudio = () => {
             if (tracks[currentTrackIndex] && tracks[currentTrackIndex].src) {
                 audio.src = tracks[currentTrackIndex].src;
                 audio.loop = true;
+                audio.currentTime = playbackPosition;
                 audio.play();
                 setStartTime(new Date());
-                console.log('audio',audio)
             }
-            setShowMilkModal(false)
         };
         const stopAudio = () => {
             audio.loop = false;
             audio.pause();
             audio.currentTime = 0;
-            setEndTime(new Date());
-            console.log('endTime?.getTime() ',endTime?.getTime() )
-            setShowMilkModal(true)
+
         };
-        const pauseAudio=()=>{
+        const pauseAudio = () => {
             audio.pause();
         }
         if (milking && !paused) {
             playAudio();
-        } if(milking && paused){
-             pauseAudio()
-        }else if(!milking) {
+        } if (milking && paused) {
+            pauseAudio()
+        } else if (!milking) {
             stopAudio();
         }
 
         return () => {
             stopAudio();
         };
-    }, [milking]);
+    }, [milking, paused]);
     const pauseMilking = () => {
         setPaused(true);
+        setPlaybackPosition(audio.currentTime);
+        audio.pause();
     };
 
     const resumeMilking = () => {
         setPaused(false);
     };
-    useEffect(()=>{
-     if(startTime&&endTime){
-        setDuration((endTime?.getTime() - startTime?.getTime())/1000);
-     }
-    },[startTime,endTime])
     const startMilking = (e) => {
         e.preventDefault();
         setMilking(true);
-        setDuration(0)
+
+        setShowMilkModal(false)
         // Start music playback and timer
     };
     const stopMilking = (e) => {
         e.preventDefault();
         setMilking(false);
-      
+        setShowMilkModal(true)
         // Stop music and timer
         // Prompt user to enter milking details
     };
@@ -81,11 +74,10 @@ const MilkingMusicPlayer = () => {
             date: startTime.toLocaleDateString(),
             startTime: startTime.toLocaleTimeString(),
             endTime: endTime.toLocaleTimeString(),
-            duration: formatTime(duration / 1000), // Convert milliseconds to seconds for the timer
             milkQuantity: milkQuantity,
         };
         saveMilkingSession(sessionData);
-        
+
         // Reset states
         setMilking(false);
         setPaused(false);
@@ -103,6 +95,9 @@ const MilkingMusicPlayer = () => {
         audio.src = tracks[index].src;
         if (milking) {
             audio.play();
+        } else {
+            setMilking(true);
+            setShowMilkModal(false)
         }
     };
     const handleCloseMilkModal = () => {
@@ -115,35 +110,37 @@ const MilkingMusicPlayer = () => {
                 <h2 className="heading mb-4">Milking Music Player</h2>
                 {milking ? (
                     <div className="milking-container">
-                       {paused?(
-                        <button className="milking-button stop-milking" onClick={resumeMilking}>Resume</button>
-                       ):<button className="milking-button stop-milking" onClick={pauseMilking}>Pause</button>} 
+                        {paused ? (
+                            <button className="milking-button pause-milking" onClick={resumeMilking}>Resume</button>
+                        ) : <button className="milking-button resume-milking" onClick={pauseMilking}>Pause</button>}
                         <button className="milking-button stop-milking" onClick={stopMilking}>Stop</button>
-                        
+
                     </div>
                 ) : (
-                    <button className="milking-button start-milking" onClick={startMilking}>Start Milking</button>
+                    <button className="milking-button start-milking" onClick={startMilking}>Start</button>
                 )}
 
             </div>
             <div>
-                <Timer milking={milking} setDuration={setDuration} />
+                <Timer
+                    milking={milking}
+                    paused={paused}
+                />
             </div>
-            <MilkModal 
-            showMilkModal={showMilkModal}  
-            handleCloseMilkModal={handleCloseMilkModal} 
-            milkQuantity={milkQuantity}
-            setMilkQuantity={setMilkQuantity}
-            handleMilkConfirmation={handleMilkConfirmation}
+            <MilkModal
+                showMilkModal={showMilkModal}
+                handleCloseMilkModal={handleCloseMilkModal}
+                milkQuantity={milkQuantity}
+                setMilkQuantity={setMilkQuantity}
+                handleMilkConfirmation={handleMilkConfirmation}
             />
             <div>
                 <h2 className="heading mb-4">Playlist</h2>
-                <ListGroup>
+                <ListGroup className='trackList'>
                     {tracks.map((track, index) => (
-                        <ListGroup.Item key={index} onClick={() => setTrack(index)}>
-                            <a className={`musicTrack ${index === currentTrackIndex ? 'active' : ''}`}>
-                                {track.title}
-                            </a>
+                        <ListGroup.Item key={index} onClick={() => setTrack(index)} className={`musicTrack ${index === currentTrackIndex ? 'active' : ''}`}>
+                            <img src={track.thumbnail} alt={track.title} />
+                            <span className="trackTitle">{track.title}</span>
                         </ListGroup.Item>
                     ))}
                 </ListGroup>

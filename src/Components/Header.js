@@ -7,7 +7,7 @@ const Header = () => {
 
         <header className="header">
             <Navbar bg="dark" variant="dark" expand="lg">
-                <Navbar.Brand as={Link} to="/">
+                <Navbar.Brand as={Link} to="/" className="brand">
 
                     <img
                         src={MilkLogo}
@@ -16,7 +16,7 @@ const Header = () => {
                         className="d-inline-block align-top cowLogo"
                         alt="Cow Logo"
                     />{' '}
-                    Milking Tracker</Navbar.Brand>
+                    Milking Tracker With Music</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ml-auto">

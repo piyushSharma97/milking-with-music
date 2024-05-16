@@ -1,22 +1,40 @@
 import  { useState, useEffect } from 'react';
-
-const Timer = ({milking}) => {
+import { Card, ListGroup } from 'react-bootstrap';
+import {formatTime} from '../CommonFunctions'
+const Timer = ({milking,setDuration}) => {
   const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setSeconds(prevSeconds => prevSeconds + 1);
-    }, 1000);
+    let interval;
+    if (milking) {
+      interval = setInterval(() => {
+        setSeconds(prevSeconds => prevSeconds + 1);
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
     return () => clearInterval(interval);
-  }, []);
+  }, [milking]);
+   useEffect(()=>{
+    if(!milking){
+        setSeconds(0) 
+        setDuration(seconds) 
+        console.log('second',seconds)
+    }else if(milking){
+        setDuration(0)
+    }
+   },[milking])
+  const getFormatedTime = formatTime(seconds)
 
-  const formatTime = () => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-  };
-
-  return <div>{formatTime()}</div>;
+  return (
+    <Card className="text-center">
+      <ListGroup variant="flush">
+        <ListGroup.Item>
+          <h2>{getFormatedTime}</h2>
+        </ListGroup.Item>
+      </ListGroup>
+    </Card>
+  );
 };
 
 export default Timer;

@@ -11,21 +11,22 @@ const MilkModal = ({
     const [error, setError] = useState('');
     const [isValid, setIsValid] = useState(false);
 
-    useEffect(() =>{
-        const validateQuantity = (value) => {
-            const floatRegex = /^\d*(\.\d{0,3})?$/;
-            if (floatRegex.test(value)) {
-                setError('');
-                setMilkQuantity(value);
-                setIsValid(true);
-            } else {
-                setError('Please enter a valid number');
-                setIsValid(false);
-            }
-        };
+    const validateQuantity = useCallback((value) =>{
+        const floatRegex = /^\d*(\.\d{0,3})?$/;
+        if (floatRegex.test(value)) {
+            setError('');
+            setMilkQuantity(value);
+            setIsValid(true);
+        } else {
+            setError('Please enter a valid number');
+            setIsValid(false);
+        }
+    }, [setMilkQuantity]);
 
+    useEffect(() => {
         validateQuantity(milkQuantity);
-    }, [milkQuantity, setMilkQuantity]);
+    }, [milkQuantity, validateQuantity]);
+
 
     return (
         <>

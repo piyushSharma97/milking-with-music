@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect ,useCallback } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 
 const MilkModal = ({
@@ -11,21 +11,21 @@ const MilkModal = ({
     const [error, setError] = useState('');
     const [isValid, setIsValid] = useState(false);
 
-    const validateQuantity = (value) => {
-        const floatRegex = /^\d*(\.\d{0,3})?$/;
-        if (floatRegex.test(value)) {
-            setError('');
-            setMilkQuantity(value);
-            setIsValid(true);
-        } else {
-            setError('Please enter a valid number');
-            setIsValid(false);
-        }
-    };
+    useEffect(() =>{
+        const validateQuantity = (value) => {
+            const floatRegex = /^\d*(\.\d{0,3})?$/;
+            if (floatRegex.test(value)) {
+                setError('');
+                setMilkQuantity(value);
+                setIsValid(true);
+            } else {
+                setError('Please enter a valid number');
+                setIsValid(false);
+            }
+        };
 
-    useEffect(() => {
         validateQuantity(milkQuantity);
-    }, [milkQuantity,validateQuantity]);
+    }, [milkQuantity, setMilkQuantity]);
 
     return (
         <>

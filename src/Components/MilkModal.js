@@ -25,7 +25,7 @@ const MilkModal = ({
 
     useEffect(() => {
         validateQuantity(milkQuantity);
-    }, [milkQuantity]);
+    }, [milkQuantity,validateQuantity]);
 
     return (
         <>

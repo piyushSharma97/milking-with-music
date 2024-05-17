@@ -33,7 +33,7 @@ const MilkingMusicPlayer = () => {
             audio.pause();
             audio.currentTime = 0;
         }
-    }, [milking, paused, currentTrackIndex]);
+    }, [milking, paused, currentTrackIndex,audio,playbackPosition]);
 
     const startMilking = () => {
         // Start milking session

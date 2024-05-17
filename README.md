@@ -15,7 +15,7 @@ A mobile-first web application designed to enhance the milking process with soot
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/milking-music-player.git
+    git clone https://github.com/piyushSharma97/milking-music-player.git
     ```
 
 2. Navigate to the project directory:

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { ListGroup } from 'react-bootstrap';
+import { Container, Row, Col, Button, ListGroup } from 'react-bootstrap';
 import { tracks } from '../data/tracks';
 import Timer from './Timer';
 import MilkModal from './MilkModal';
 const MilkingMusicPlayer = () => {
+    // state variables
     const [milking, setMilking] = useState(false);
     const [startTime, setStartTime] = useState(null);
     const [paused, setPaused] = useState(false);
@@ -61,7 +62,8 @@ const MilkingMusicPlayer = () => {
     };
     const stopMilking = (e) => {
         e.preventDefault();
-        setMilking(false);
+        // setMilking(false);
+        setPaused(true)
         setShowMilkModal(true)
         // Stop music and timer
         // Prompt user to enter milking details
@@ -74,7 +76,7 @@ const MilkingMusicPlayer = () => {
             date: startTime.toLocaleDateString(),
             startTime: startTime.toLocaleTimeString(),
             endTime: endTime.toLocaleTimeString(),
-            milkQuantity: milkQuantity,
+            milkQuantity: `${milkQuantity} L`,
         };
         saveMilkingSession(sessionData);
 
@@ -102,31 +104,43 @@ const MilkingMusicPlayer = () => {
     };
     const handleCloseMilkModal = () => {
         setShowMilkModal(false);
+        setMilkQuantity('');
+        setMilking(false);
+        setPaused(false);
+        setStartTime(null);
+        
+        
     };
     return (
-        <div className="main-container text-center">
+        <Container fluid className="d-flex flex-column align-items-center justify-content-center vh-100">
+            <Row className="text-center mb-4">
+                <Col>
+                    <h2 className="heading">Milking Music Player</h2>
+                </Col>
+            </Row>
+            <Row className="text-center">
+                <Col>
+                    {milking ? (
+                        <div className="milking-container d-flex justify-content-center">
+                            <Button variant="primary" className="mx-2" onClick={paused ? resumeMilking : pauseMilking}>
+                                {paused ? 'Resume' : 'Pause'}
+                            </Button>
+                            <Button variant="danger" className="mx-2" onClick={stopMilking}>Stop</Button>
+                        </div>
+                    ) : (
+                        <Button variant="success" className="start-milking" onClick={startMilking}>Start Milking</Button>
+                    )}
+                </Col>
+            </Row>
 
-            <div>
-                <h2 className="heading mb-4">Milking Music Player</h2>
-                {milking ? (
-                    <div className="milking-container">
-                        {paused ? (
-                            <button className="milking-button pause-milking" onClick={resumeMilking}>Resume</button>
-                        ) : <button className="milking-button resume-milking" onClick={pauseMilking}>Pause</button>}
-                        <button className="milking-button stop-milking" onClick={stopMilking}>Stop</button>
-
-                    </div>
-                ) : (
-                    <button className="milking-button start-milking" onClick={startMilking}>Start</button>
-                )}
-
-            </div>
-            <div>
+            <Row className="text-center mt-4">
+                <Col>
                 <Timer
                     milking={milking}
                     paused={paused}
                 />
-            </div>
+                </Col>
+            </Row>
             <MilkModal
                 showMilkModal={showMilkModal}
                 handleCloseMilkModal={handleCloseMilkModal}
@@ -141,11 +155,12 @@ const MilkingMusicPlayer = () => {
                         <ListGroup.Item key={index} onClick={() => setTrack(index)} className={`musicTrack ${index === currentTrackIndex ? 'active' : ''}`}>
                             <img src={track.thumbnail} alt={track.title} />
                             <span className="trackTitle">{track.title}</span>
+                            <span>{`${index === currentTrackIndex ? 'Playing...' : ''}`}</span>
                         </ListGroup.Item>
                     ))}
                 </ListGroup>
             </div>
-        </div>
+        </Container>
     );
 
 }

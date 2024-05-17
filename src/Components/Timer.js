@@ -6,13 +6,14 @@ const Timer = ({ milking, paused }) => {
 
   useEffect(() => {
     let interval;
-    if (milking&&!paused) {
+    
+    if (milking&&!paused) {       // Start the timer if milking is in progress and not paused
       interval = setInterval(() => {
         setSeconds(prevSeconds => prevSeconds + 1);
       }, 1000);
-    } else if(milking&&paused){
+    } else if(milking&&paused){ // pause the timer
       setSeconds(prevSeconds => prevSeconds);
-    }else {
+    }else {// reset time in case of stop
       setSeconds(0)
       clearInterval(interval);
     }

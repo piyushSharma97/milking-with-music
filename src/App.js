@@ -4,7 +4,6 @@ import { Route, Routes, Outlet } from 'react-router-dom';
 import './styles/app.scss'
 import MainPage from './Components/Main';
 import MilkingHistoryPage from './Components/MilkingHistory';
-import MilkingMusicPlayer from './Components/MilkingMusicPlayer'
 import Header from './Components/Header';
 
 function App() {
@@ -20,7 +19,6 @@ function App() {
       <Routes>
         <Route element={<App />} />
         <Route exact path="/" element={<MainPage />} />
-        <Route exact path="/milking-music" element={<MilkingMusicPlayer />} />
         <Route path="/milking-history" element={<MilkingHistoryPage />} />
       </Routes>
 

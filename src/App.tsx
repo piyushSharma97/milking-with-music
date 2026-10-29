@@ -1,27 +1,19 @@
 
-import { Route, Routes, Outlet } from 'react-router-dom';
-// import './App.css';
-import './styles/app.scss'
+import { Route, Routes } from 'react-router-dom';
+import './styles/app.scss';
 import MainPage from './Components/Main';
 import MilkingHistoryPage from './Components/MilkingHistory';
 import Header from './Components/Header';
 
-function App() {
+/** Renders the shared navigation and the application's page routes. */
+function App(): JSX.Element {
   return (
     <div className="App">
-      <div>
-        <Header />
-      </div>
-
-      <div>
-        <Outlet />
-      </div>
+      <Header />
       <Routes>
-        <Route element={<App />} />
-        <Route exact path="/" element={<MainPage />} />
+        <Route path="/" element={<MainPage />} />
         <Route path="/milking-history" element={<MilkingHistoryPage />} />
       </Routes>
-
     </div>
   );
 }
